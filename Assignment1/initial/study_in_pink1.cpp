@@ -335,40 +335,56 @@ int chaseTaxi(int & HP1, int & EXP1, int & HP2, int & EXP2, int E3) {
 // Task 4
 int checkPassword(const char * s, const char * email) {
 	string str = s;
-    int size = strlen(s), i,check = 0, sci = 0, sei = 0, check1 = 0,f;
-
-	while(email[i] != '@') {
-		i++;
-	}
 	string str_e = email;
-	string se = str_e.substr(0,i);
-	
-	if (size < 8 || size > 20) {
-		if (size < 8) f = -1;
-		if (size > 20) f = -2;
-		
-	} else {
-			sei = str.find(se);
-			if (sei != -1) f = -(300 + sei);
-			else {
-				for (int i = 0; i < size; i++) {
-					if (s[i] == s[i+1] && s[i+1] == s[i+2]) {
-						sci = i;
-						check1++;
-						break;
-					}
-				}
-				if (check1 == 1) f = -(400 + sci);
-				else {
-					for (int i = 0; i < size ; i++) {
-						if (s[i] == '!' || s[i] == '@' || s[i] == '#' || s[i] == '$' || s[i] == '%') check++;
-					}
-					if (check == 0) f = -5;
-					else f = -10; 
-			}
-		}
-	}
-	return f;
+	size_t at_pos = str_e.find('@');
+    string se = str_e.substr(0, at_pos);
+    
+    int len = str.length();
+    
+    if (len < 8) {
+        return -1;
+    }
+    
+    if (len > 20) {
+        return -2;
+    }
+
+    size_t sei = str.find(se);
+    if (sei != string::npos) {
+        return -(300 + sei);
+    }
+    
+    for (int i = 0; i <= len - 3; ++i) {
+        if (s[i] == s[i+1] && s[i+1] == s[i+2]) {
+            return -(400 + i);
+        }
+    }
+    
+    bool has_special = false;
+    for (int i = 0; i < len; ++i) {
+        char c = s[i];
+        if (c == '@' || c == '#' || c == '%' || c == '$' || c == '!') {
+            has_special = true;
+            break;
+        }
+    }
+    if (!has_special) {
+        return -5;
+    }
+    
+	for (int i = 0; i < len; ++i) {
+        char c = s[i];
+        bool is_digit = (c >= '0' && c <= '9');
+        bool is_lower = (c >= 'a' && c <= 'z');
+        bool is_upper = (c >= 'A' && c <= 'Z');
+        bool is_special = (c == '@' || c == '#' || c == '%' || c == '$' || c == '!');
+        
+        if (!is_digit && !is_lower && !is_upper && !is_special) {
+            return i; 
+        }
+    }
+    
+    return -10;
 }
 
 // Task 5
